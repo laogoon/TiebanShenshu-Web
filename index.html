@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>皇極神數 ‧ 鐵板神數 & 邵子神數 乾坤定數大典</title>
+    <link rel="stylesheet" href="css/style.css?v=20260916_v5">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 頂部宣紙古典標題欄 -->
+        <header class="header-section">
+            <div class="stamp-mark">乾坤定數</div>
+            <h1 class="main-title">皇極神數 ‧ 萬條大典考時定刻館</h1>
+            <p class="subtitle">【鐵板神數 12,000 條 & 邵子神數 6,144 條】四柱起卦 ‧ 八刻考親 ‧ 定刻命書卷軸</p>
+        </header>
+
+        <!-- 四柱排盤與八字命盤控制台 -->
+        <section class="paipan-section" id="paipan-panel">
+            <div class="paipan-header">
+                <div class="section-title">
+                    <span class="icon">🏮</span>
+                    <h2>天文農曆排盤 ‧ 96刻八刻起卦羅盤</h2>
+                </div>
+                <div class="paipan-toggle-btn" id="toggle-paipan-btn" onclick="togglePaipanCollapse()">
+                    <span id="paipan-toggle-text">收合命盤</span> ▲
+                </div>
+            </div>
+
+            <div class="paipan-form-container" id="paipan-form-box">
+                <!-- 生辰輸入表單 -->
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>命造性別</label>
+                        <div class="gender-radio-group">
+                            <label class="radio-label"><input type="radio" name="gender" value="乾造" checked> 乾造 (男命)</label>
+                            <label class="radio-label"><input type="radio" name="gender" value="坤造"> 坤造 (女命)</label>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>出生西曆 (年/月/日)</label>
+                        <div class="inline-inputs">
+                            <input type="number" id="birth-year" class="num-input year-input" value="1990" min="1900" max="2050"> 年
+                            <input type="number" id="birth-month" class="num-input date-input" value="5" min="1" max="12"> 月
+                            <input type="number" id="birth-day" class="num-input date-input" value="15" min="1" max="31"> 日
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>出生時刻 (時/分)</label>
+                        <div class="inline-inputs">
+                            <input type="number" id="birth-hour" class="num-input date-input" value="12" min="0" max="23"> 時
+                            <input type="number" id="birth-minute" class="num-input date-input" value="30" min="0" max="59"> 分
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>卦數演算法體系</label>
+                        <select id="school-mode" class="select-input">
+                            <option value="xiantian">伏羲先天八卦數 (邵雍古典北派)</option>
+                            <option value="houtian">洛書後天八卦數 (南派主流 12000 條)</option>
+                        </select>
+                    </div>
+                    <!-- 【正統步驟一求人數】求占當下時間 -->
+                    <div class="input-group highlight-input-group">
+                        <div class="input-group-header">
+                            <label>求占當下時間 (人數機遇卦)</label>
+                            <button class="small-action-btn" type="button" onclick="setNowDivinationTime()">🕒 設為當前</button>
+                        </div>
+                        <div class="inline-inputs">
+                            <input type="number" id="now-year" class="num-input year-input" value="2026" min="1900" max="2100"> 年
+                            <input type="number" id="now-month" class="num-input date-input" value="9" min="1" max="12"> 月
+                            <input type="number" id="now-day" class="num-input date-input" value="16" min="1" max="31"> 日
+                            <input type="number" id="now-hour" class="num-input date-input" value="14" min="0" max="23"> 時
+                            <input type="number" id="now-minute" class="num-input date-input" value="15" min="0" max="59"> 分
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="paipan-btn" onclick="runBaziPaipan()">
+                        ⚡ 排定四柱命盤 ‧ 推求神數起例
+                    </button>
+                    <span class="paipan-tip">※ 完整支援正統五步驟：求天數（生辰）+ 求人數（占時）+ 求地數 + 八卦滾 48 條神數</span>
+                </div>
+            </div>
+
+            <!-- 排盤結果展示區 (預設排盤完成後動態顯示) -->
+            <div class="bazi-result-box" id="bazi-result-container">
+                <!-- 1. 四柱干支與納音命盤卡片 -->
+                <div class="pillars-container">
+                    <div class="pillar-card" id="pillar-year">
+                        <div class="p-title">年柱 (祖業根基)</div>
+                        <div class="p-tengod" id="p-year-tengod">-</div>
+                        <div class="p-gz" id="p-year-gz">-</div>
+                        <div class="p-nayin" id="p-year-nayin">-</div>
+                        <div class="p-canggan" id="p-year-canggan">-</div>
+                    </div>
+                    <div class="pillar-card" id="pillar-month">
+                        <div class="p-title">月柱 (事業提綱)</div>
+                        <div class="p-tengod" id="p-month-tengod">-</div>
+                        <div class="p-gz" id="p-month-gz">-</div>
+                        <div class="p-nayin" id="p-month-nayin">-</div>
+                        <div class="p-canggan" id="p-month-canggan">-</div>
+                    </div>
+                    <div class="pillar-card highlight-day" id="pillar-day">
+                        <div class="p-title">日柱 (元神配偶)</div>
+                        <div class="p-tengod" id="p-day-tengod">日主元神</div>
+                        <div class="p-gz" id="p-day-gz">-</div>
+                        <div class="p-nayin" id="p-day-nayin">-</div>
+                        <div class="p-canggan" id="p-day-canggan">-</div>
+                    </div>
+                    <div class="pillar-card" id="pillar-hour">
+                        <div class="p-title">時柱 (歸宿子息)</div>
+                        <div class="p-tengod" id="p-hour-tengod">-</div>
+                        <div class="p-gz" id="p-hour-gz">-</div>
+                        <div class="p-nayin" id="p-hour-nayin">-</div>
+                        <div class="p-canggan" id="p-hour-canggan">-</div>
+                    </div>
+                </div>
+
+                <!-- 2. 神數太玄數碼與 96 刻考刻看板 -->
+                <div class="shenshu-summary-grid">
+                    <div class="summary-card">
+                        <div class="sm-label">神數起例總密碼</div>
+                        <div class="sm-value highlight-gold" id="sm-shenshu-code">-</div>
+                        <div class="sm-desc" id="sm-shenshu-desc">太玄數理與卦序組合</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="sm-label">96 刻主刻位置</div>
+                        <div class="sm-value" id="sm-bake-pos">-</div>
+                        <div class="sm-desc" id="sm-bake-time">-</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="sm-label">推算大運走勢</div>
+                        <div class="sm-value" id="sm-dayun-dir">-</div>
+                        <div class="sm-desc" id="sm-dayun-desc">-</div>
+                    </div>
+                </div>
+
+                <!-- 3. 【正統鐵板神數】時辰 8 刻考親條文驗證看板 (正向起例 ‧ 考時定刻) -->
+                <div class="kaoqin-verification-section" id="kaoqin-section">
+                    <div class="lq-header">
+                        <span class="lq-title">📜 第一步：時辰 8 刻客觀考親條文看板 (正向起例推導 ‧ 審閱核實定刻)</span>
+                    </div>
+                    <p class="section-intro">
+                        ※ <strong>正統鐵板起例</strong>：系統已根據您的四柱八字、太玄配數與八刻加則，<strong>客觀正向推算出本時辰 8 刻的專屬條號與原典讖語</strong>。請逐一審閱下方 8 刻條文，核對哪一刻與您雙親生肖、存歿先後或長幼緣份相符，點擊<strong>「✅ 這條吻合 ‧ 鎖定此刻」</strong>即可定刻！
+                    </p>
+
+                    <!-- 六親快速篩選輔助輸入 -->
+                    <div class="lq-inputs-grid compact-grid">
+                        <div class="lq-input-item">
+                            <label>輸入父親出生西元年 (選填輔助比對)</label>
+                            <input type="number" id="lq-father-year" class="num-input year-input" placeholder="如: 1960" value="1960" oninput="renderKaoQinBoard()">
+                            <div class="lq-hint" id="lq-father-hint">庚子年 ‧ 壁上土 (土年) ‧ 屬鼠</div>
+                        </div>
+                        <div class="lq-input-item">
+                            <label>輸入母親出生西元年 (選填輔助比對)</label>
+                            <input type="number" id="lq-mother-year" class="num-input year-input" placeholder="如: 1963" value="1963" oninput="renderKaoQinBoard()">
+                            <div class="lq-hint" id="lq-mother-hint">癸卯年 ‧ 金箔金 (金年) ‧ 屬兔</div>
+                        </div>
+                        <div class="lq-input-item" style="display: flex; align-items: flex-end;">
+                            <button class="match-btn" onclick="renderKaoQinBoard(); showMatchToast();">
+                                🔍 輔助比對 8 刻生肖
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 8 刻考親條文並排對照網格 -->
+                    <div class="kaoqin-grid" id="kaoqin-grid-container">
+                        <!-- 動態生成 8 刻考親條文卡片 -->
+                    </div>
+                </div>
+
+                <!-- 4. 【定刻命書專屬大典】一旦定刻鎖定，此卷軸自動展開 -->
+                <div class="lifebook-scroll-section" id="lifebook-scroll-section">
+                    <div class="lifebook-header">
+                        <div class="stamp-gold">鐵板真傳</div>
+                        <h3 class="lifebook-title" id="lifebook-title">乾坤定數 ‧ 一生命運條文大典 (已定第 4 刻)</h3>
+                        <p class="lifebook-subtitle" id="lifebook-subtitle">四柱起例完備 ‧ 考親定刻鎖定 ‧ 依坤集神數推算人生全貌</p>
+                    </div>
+
+                    <!-- 人生十二宮條文網格 (父母/兄弟/夫妻/子息/功名/財產/壽元) -->
+                    <div class="lifebook-sections-grid" id="lifebook-sections-grid">
+                        <!-- 動態生成人生各宮條文 -->
+                    </div>
+
+                    <!-- 一生大運流年歲數條文卷軸 -->
+                    <div class="liunian-timeline-container">
+                        <div class="timeline-header">
+                            <span>⏳ 一生大運流年重要轉折歲數條文卷軸 (16歲 ~ 70歲)</span>
+                        </div>
+                        <div class="liunian-timeline-list" id="liunian-timeline-list">
+                            <!-- 動態生成流年歲數條文 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. 【正統五步驟核心】八卦滾法 48 條神數命譜大典 -->
+                <div class="baguagun-section" id="baguagun-section">
+                    <div class="bgg-main-header">
+                        <div class="stamp-gold">正統五步驟</div>
+                        <h3 class="bgg-title">☯️ 天人地數起例 ‧ 八卦滾法 48 條神數命譜大典</h3>
+                        <p class="bgg-subtitle" id="bgg-subtitle">
+                            求天數 (四柱元堂本卦) ‧ 求人數 (占時機遇卦) ‧ 八卦互體互調 ‧ 洛書三數列交互生成 48 條乾坤密碼
+                        </p>
+                    </div>
+
+                    <!-- 天數與人數參數摘要條 -->
+                    <div class="bgg-summary-bar" id="bgg-summary-bar">
+                        <div class="bgg-sum-item">
+                            <span class="bgg-sum-lbl">天數 (三元甲子元堂)：</span>
+                            <span class="bgg-sum-val" id="bgg-tian-val">-</span>
+                        </div>
+                        <div class="bgg-sum-item">
+                            <span class="bgg-sum-lbl">人數 (求占機遇數理)：</span>
+                            <span class="bgg-sum-val" id="bgg-ren-val">-</span>
+                        </div>
+                        <div class="bgg-sum-item">
+                            <span class="bgg-sum-lbl">神數交參核心：</span>
+                            <span class="bgg-sum-val" id="bgg-core-val">-</span>
+                        </div>
+                    </div>
+
+                    <!-- 8 卦 48 條神數排盤網格 (每卦 6 條) -->
+                    <div class="baguagun-grid" id="baguagun-grid">
+                        <!-- 動態生成 8 卦卡片與 48 條條文 -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 雙庫切換與檢索控制台 -->
+        <section class="control-panel">
+            <div class="tab-switchers">
+                <button class="tab-btn active" id="btn-switch-tb" onclick="switchMode('tieban')">
+                    📜 鐵板神數 (12,000 條)
+                </button>
+                <button class="tab-btn" id="btn-switch-sz" onclick="switchMode('shaozi')">
+                    ☯️ 邵子神數 (6,144 條)
+                </button>
+            </div>
+
+            <div class="search-box-wrapper">
+                <input type="text" id="search-input" class="search-input" placeholder="請輸入條號 (如: 1014, 6111) 或關鍵字 (如: 折桂, 父母, 屬鼠, 剋妻, 入泮)..." autofocus>
+                <button class="random-btn" onclick="fetchRandomSample()">🎲 隨機抽查驗證</button>
+            </div>
+
+            <!-- 快捷分類標籤 -->
+            <div class="tags-container" id="quick-tags">
+                <span class="tag-label">快捷標籤：</span>
+                <span class="tag-chip active" onclick="filterTag('全部')">全部</span>
+                <span class="tag-chip" onclick="filterTag('考親')">考父母</span>
+                <span class="tag-chip" onclick="filterTag('兄弟')">兄弟姐妹</span>
+                <span class="tag-chip" onclick="filterTag('妻妾')">婚姻配偶</span>
+                <span class="tag-chip" onclick="filterTag('子息')">子嗣兒郎</span>
+                <span class="tag-chip" onclick="filterTag('功名')">功名官祿</span>
+                <span class="tag-chip" onclick="filterTag('流年')">大運流年</span>
+                <span class="tag-chip" onclick="filterTag('壽元')">壽元歸期</span>
+            </div>
+        </section>
+
+        <!-- 條文展示列表 -->
+        <main class="results-container">
+            <div class="results-header">
+                <span id="results-count-label">查詢結果: 載入中...</span>
+                <span class="pagination-info">即時響應 & 高亮呈現</span>
+            </div>
+            <div class="poem-grid" id="poem-grid">
+                <!-- 動態注入條文卡片 -->
+            </div>
+        </main>
+    </div>
+
+    <!-- 核心排盤、解碼腳本與應用腳本 (含版本號強制作廢快取) -->
+    <script src="js/data_loader.js?v=20260916_v5"></script>
+    <script src="js/calendar.js?v=20260916_v5"></script>
+    <script src="js/tieban_engine.js?v=20260916_v5"></script>
+    <script>
+        const loader = new DataLoader();
+        let currentMode = 'tieban'; // 'tieban' | 'shaozi'
+        let currentTag = '全部';
+        let fullTieban = [];
+        let fullShaozi = [];
+
+        async function init() {
+            const t0 = performance.now();
+            try {
+                // 優先使用本地 data 讀取
+                fullTieban = await loader.loadTieban('');
+                fullShaozi = await loader.loadShaozi('');
+                const t1 = performance.now();
+
+                // 數據加載完成
+                renderResults();
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // 【排盤交互函數】
+        let isPaipanCollapsed = false;
+        function togglePaipanCollapse() {
+            isPaipanCollapsed = !isPaipanCollapsed;
+            document.getElementById('paipan-form-box').style.display = isPaipanCollapsed ? 'none' : 'block';
+            document.getElementById('bazi-result-container').style.display = isPaipanCollapsed ? 'none' : 'block';
+            document.getElementById('paipan-toggle-text').innerText = isPaipanCollapsed ? '展開命盤' : '收合命盤';
+            document.getElementById('toggle-paipan-btn').innerHTML = `<span id="paipan-toggle-text">${isPaipanCollapsed ? '展開命盤' : '收合命盤'}</span> ${isPaipanCollapsed ? '▼' : '▲'}`;
+        }
+
+        function setNowDivinationTime() {
+            const now = new Date();
+            document.getElementById('now-year').value = now.getFullYear();
+            document.getElementById('now-month').value = now.getMonth() + 1;
+            document.getElementById('now-day').value = now.getDate();
+            document.getElementById('now-hour').value = now.getHours();
+            document.getElementById('now-minute').value = now.getMinutes();
+            if (currentActiveBazi) {
+                renderBaGuaGun48();
+            }
+        }
+
+        function runBaziPaipan() {
+            const gender = document.querySelector('input[name="gender"]:checked').value;
+            const year = parseInt(document.getElementById('birth-year').value, 10);
+            const month = parseInt(document.getElementById('birth-month').value, 10);
+            const day = parseInt(document.getElementById('birth-day').value, 10);
+            const hour = parseInt(document.getElementById('birth-hour').value, 10);
+            const minute = parseInt(document.getElementById('birth-minute').value, 10);
+            const schoolMode = document.getElementById('school-mode').value;
+
+            if (isNaN(year) || isNaN(month) || isNaN(day)) {
+                alert('請輸入有效的出生年月日');
+                return;
+            }
+
+            // 1. 調用 BaziCalendar 計算四柱八字與大運
+            const bazi = BaziCalendar.calculateBazi(year, month, day, hour, minute, gender);
+            const p = bazi.pillars;
+
+            // 2. 調用 TiebanEngine 計算 96刻與神數起例
+            const bake = TiebanEngine.getBaKe(hour, minute);
+            const sCode = TiebanEngine.getShenshuCode(p.year.gz, p.month.gz, p.day.gz, p.hour.gz, schoolMode);
+
+            // 3. 渲染四柱卡片
+            function renderPillar(id, data, isDayMaster = false) {
+                document.getElementById(`p-${id}-tengod`).innerText = isDayMaster ? '日主 (元神)' : data.tenGod;
+                document.getElementById(`p-${id}-gz`).innerHTML = `<span class="gz-text">${data.gz}</span>`;
+                document.getElementById(`p-${id}-nayin`).innerText = data.nayin;
+                const cgHtml = data.canggan.map(cg => `${cg.gan} (${cg.tenGod})`).join(' · ');
+                document.getElementById(`p-${id}-canggan`).innerText = `藏干: ${cgHtml}`;
+            }
+
+            renderPillar('year', p.year);
+            renderPillar('month', p.month);
+            renderPillar('day', p.day, true);
+            renderPillar('hour', p.hour);
+
+            // 4. 渲染數理指標總結
+            document.getElementById('sm-shenshu-code').innerText = `主元堂 【${sCode.primaryCode}】`;
+            document.getElementById('sm-shenshu-desc').innerText = `太玄數: ${sCode.taixuan} ‧ 卦序: ${sCode.guaSequence} ‧ ${sCode.schoolLabel}`;
+            
+            document.getElementById('sm-bake-pos').innerText = `第 ${bake.keInDay} 刻 / 96 刻`;
+            document.getElementById('sm-bake-time').innerText = `${bake.shichenName}時 第${bake.keInShichen}刻 (${bake.minutes})`;
+
+            document.getElementById('sm-dayun-dir').innerText = bazi.direction;
+            document.getElementById('sm-dayun-desc').innerText = `首步大運: ${bazi.dayunList[0].gz} (${bazi.dayunList[0].ageStart}歲起運)`;
+
+            // 顯示命盤結果區
+            document.getElementById('bazi-result-container').classList.add('visible');
+
+            // 渲染 8 刻考親條文對照看板
+            renderKaoQinBoard(bake.keInShichen);
+
+            // 渲染八卦滾 48 條神數大典
+            renderBaGuaGun48();
+
+            // 預設以當前刻生成命書大典
+            lockAndGenerateLifeBook(bake.keInShichen, false);
+        }
+
+        function renderBaGuaGun48() {
+            if (!currentActiveBazi) return;
+            const nowY = parseInt(document.getElementById('now-year').value, 10) || 2026;
+            const nowM = parseInt(document.getElementById('now-month').value, 10) || 9;
+            const nowD = parseInt(document.getElementById('now-day').value, 10) || 16;
+            const nowH = parseInt(document.getElementById('now-hour').value, 10) || 14;
+            const nowMin = parseInt(document.getElementById('now-minute').value, 10) || 15;
+            const schoolMode = document.getElementById('school-mode').value;
+
+            const renData = TiebanEngine.calculateRenShu(nowY, nowM, nowD, nowH, nowMin);
+            const bggData = TiebanEngine.calculateBaGuaGun48(currentActiveBazi, renData, fullTieban, schoolMode);
+
+            // 更新摘要條
+            document.getElementById('bgg-tian-val').innerText = `${bggData.tian.yuanLabel} ‧ 元堂【${bggData.tian.upperGua}${bggData.tian.lowerGua}${bggData.tian.hexName}】(基數:${bggData.tian.baseNumber})`;
+            document.getElementById('bgg-ren-val').innerText = `${renData.gzYear}年${renData.gzMonth}月${renData.gzDay}日${renData.gzHour}時 ‧ 占卦【${renData.upperGua}${renData.lowerGua}${renData.hexName}】(卦數:${renData.shichenGuaNum})`;
+            document.getElementById('bgg-core-val').innerText = `天數(${bggData.tian.baseNumber}) + 人數(${renData.shichenGuaNum}) ‧ 8卦演滾`;
+
+            const bggGrid = document.getElementById('baguagun-grid');
+            bggGrid.innerHTML = '';
+
+            bggData.eightHexagrams.forEach(sec => {
+                const card = document.createElement('div');
+                card.className = 'bgg-card';
+
+                let versesHtml = '';
+                sec.verses.forEach(v => {
+                    versesHtml += `
+                        <div class="bgg-verse-item" onclick="document.getElementById('search-input').value = ${v.id}; renderResults(); document.querySelector('.results-container').scrollIntoView({ behavior: 'smooth' });">
+                            <div class="bgg-v-head">
+                                <span class="bgg-v-formula">${v.formula}</span>
+                                <span class="bgg-v-id">#${v.id}</span>
+                            </div>
+                            <div class="bgg-v-text">「${v.text}」</div>
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="bgg-card-header">
+                        <div class="bgg-card-title">${sec.title}</div>
+                        <div class="bgg-card-hex">${sec.upper}${sec.lower} ‧ ${sec.hexName}</div>
+                        <div class="bgg-card-nums">
+                            <span>S1(排列): ${sec.s1}</span>
+                            <span>S2(先天洛書): ${sec.s2}</span>
+                            <span>S3(後天洛書): ${sec.s3}</span>
+                        </div>
+                    </div>
+                    <div class="bgg-verses-list">
+                        ${versesHtml}
+                    </div>
+                `;
+                bggGrid.appendChild(card);
+            });
+        }
+
+        let currentActiveBazi = null;
+        let currentLockedKe = 1;
+
+        /**
+         * 【考時看板】渲染時辰內 8 刻考親條文對照表
+         */
+        function renderKaoQinBoard(activeKe) {
+            if (activeKe !== undefined && activeKe !== null) {
+                currentLockedKe = activeKe;
+            }
+            const gender = document.querySelector('input[name="gender"]:checked').value;
+            const year = parseInt(document.getElementById('birth-year').value, 10);
+            const month = parseInt(document.getElementById('birth-month').value, 10);
+            const day = parseInt(document.getElementById('birth-day').value, 10);
+            const hour = parseInt(document.getElementById('birth-hour').value, 10);
+            const minute = parseInt(document.getElementById('birth-minute').value, 10);
+            
+            const bazi = BaziCalendar.calculateBazi(year, month, day, hour, minute, gender);
+            currentActiveBazi = bazi;
+
+            const hourZhi = bazi.pillars.hour.zhi;
+            const hourGan = bazi.pillars.hour.gan;
+
+            const fYear = document.getElementById('lq-father-year').value;
+            const mYear = document.getElementById('lq-mother-year').value;
+            const fInfo = fYear ? BaziCalendar.getNayinByYear(fYear) : null;
+            const mInfo = mYear ? BaziCalendar.getNayinByYear(mYear) : null;
+
+            if (fInfo) {
+                document.getElementById('lq-father-hint').innerText = `${fInfo.gz}年 ‧ ${fInfo.nayin} (${fInfo.wuxing}年) ‧ 屬${fInfo.shengxiao}`;
+            }
+            if (mInfo) {
+                document.getElementById('lq-mother-hint').innerText = `${mInfo.gz}年 ‧ ${mInfo.nayin} (${mInfo.wuxing}年) ‧ 屬${mInfo.shengxiao}`;
+            }
+
+            const schoolMode = document.getElementById('school-mode').value;
+            const kaoqinList = TiebanEngine.getShichenKaoQinVerses(hourZhi, hourGan, fullTieban, fInfo, mInfo, fullShaozi, bazi, schoolMode);
+
+            const grid = document.getElementById('kaoqin-grid-container');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            kaoqinList.forEach(kItem => {
+                const isSelected = (kItem.ke === currentLockedKe);
+                
+                // 判斷是否為推薦匹配刻 (父母生年生肖吻合)
+                let isRecommended = kItem.isExactMatch;
+
+                const card = document.createElement('div');
+                card.className = `kaoqin-card ${isSelected ? 'selected' : ''} ${isRecommended ? 'recommended' : ''}`;
+                card.innerHTML = `
+                    <div class="kq-header">
+                        <span class="kq-badge">第 ${kItem.ke} 刻 (${(kItem.ke-1)*15}~${kItem.ke*15}分)</span>
+                        <span class="kq-code">正向條號 #${kItem.code}</span>
+                    </div>
+                    ${isRecommended ? '<div class="kq-recommend-tag">⭐ 條文吻合您輸入之生肖</div>' : ''}
+                    <div class="kq-summary">
+                        🏷️ <strong>客觀考親解析：</strong><br>${kItem.summary}
+                    </div>
+                    <div class="kq-poem">
+                        「${kItem.text}」
+                    </div>
+                    <button class="kq-lock-btn" onclick="lockAndGenerateLifeBook(${kItem.ke}, true)">
+                        ${isSelected ? '🌟 當前定刻中' : '✅ 這條吻合 ‧ 鎖定此刻'}
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function showMatchToast() {
+            const fYear = document.getElementById('lq-father-year').value;
+            const mYear = document.getElementById('lq-mother-year').value;
+            const fInfo = fYear ? BaziCalendar.getNayinByYear(fYear) : null;
+            const mInfo = mYear ? BaziCalendar.getNayinByYear(mYear) : null;
+            if (fInfo && mInfo) {
+                alert(`✅ 父母生年已完成比對：\n父親：${fInfo.gz}年 (${fInfo.wuxing}年 ‧ 屬${fInfo.shengxiao})\n母親：${mInfo.gz}年 (${mInfo.wuxing}年 ‧ 屬${mInfo.shengxiao})\n\n下方 8 刻已自動匹配並標記【⭐ 父母屬相吻合推薦】之刻數！請點擊【✅ 這條吻合 ‧ 鎖定此刻】完成定刻。`);
+            }
+        }
+
+        /**
+         * 【定刻鎖定】定刻並自動展開人生十二宮與流年大典卷軸
+         */
+        function lockAndGenerateLifeBook(targetKe, shouldScroll = true) {
+            if (!currentActiveBazi) return;
+
+            // 同步微調出生分鐘以反映新定之刻數
+            const newMin = (targetKe - 1) * 15 + 7;
+            document.getElementById('birth-minute').value = newMin;
+
+            // 更新頂部 96 刻面板
+            const bake = TiebanEngine.getBaKe(document.getElementById('birth-hour').value, newMin);
+            document.getElementById('sm-bake-pos').innerText = `第 ${bake.keInDay} 刻 / 96 刻 (已定刻)`;
+            document.getElementById('sm-bake-time').innerText = `${bake.shichenName}時 第${bake.keInShichen}刻 (${bake.minutes})`;
+
+            const schoolMode = document.getElementById('school-mode').value;
+            const book = TiebanEngine.calculateFullLifeBook(currentActiveBazi, targetKe, schoolMode, fullTieban);
+
+            // 更新標題
+            document.getElementById('lifebook-title').innerText = `乾坤定數 ‧ 一生命運條文大典 (已定第 ${targetKe} 刻)`;
+            document.getElementById('lifebook-subtitle').innerText = `命主四柱起例完備 ‧ 考親定刻第 ${targetKe} 刻鎖定 ‧ 展開人生十二宮與大運流年卷軸`;
+
+            // 1. 渲染十二宮條文網格
+            const sectionsGrid = document.getElementById('lifebook-sections-grid');
+            sectionsGrid.innerHTML = '';
+            book.sections.forEach(sec => {
+                const card = document.createElement('div');
+                card.className = 'lifebook-card';
+                card.onclick = () => {
+                    document.getElementById('search-input').value = sec.id;
+                    renderResults();
+                    document.querySelector('.results-container').scrollIntoView({ behavior: 'smooth' });
+                };
+                card.innerHTML = `
+                    <div class="lbc-category">${sec.category}</div>
+                    <div class="lbc-code">第 ${sec.id} 條 ‧ 點擊查閱</div>
+                    <div class="lbc-text">「${sec.text}」</div>
+                    <div class="lbc-desc">${sec.desc}</div>
+                `;
+                sectionsGrid.appendChild(card);
+            });
+
+            // 2. 渲染一生大運流年歲數條文卷軸
+            const timelineList = document.getElementById('liunian-timeline-list');
+            timelineList.innerHTML = '';
+            book.liunianList.forEach(ln => {
+                const item = document.createElement('div');
+                item.className = 'timeline-item';
+                item.onclick = () => {
+                    document.getElementById('search-input').value = ln.id;
+                    renderResults();
+                    document.querySelector('.results-container').scrollIntoView({ behavior: 'smooth' });
+                };
+                item.innerHTML = `
+                    <div class="tl-age">${ln.age} 歲</div>
+                    <div class="tl-content">
+                        <div class="tl-stage">${ln.stage} ‧ 條號 #${ln.id}</div>
+                        <div class="tl-text">「${ln.text}」</div>
+                    </div>
+                `;
+                timelineList.appendChild(item);
+            });
+
+            // 重新刷新看板選中狀態
+            renderKaoQinBoard(targetKe);
+
+            // 滾動展示命書
+            if (shouldScroll) {
+                document.getElementById('lifebook-scroll-section').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            document.getElementById('btn-switch-tb').classList.toggle('active', mode === 'tieban');
+            document.getElementById('btn-switch-sz').classList.toggle('active', mode === 'shaozi');
+            document.getElementById('search-input').value = '';
+            currentTag = '全部';
+            updateTagUI();
+            renderResults();
+        }
+
+        function filterTag(tag) {
+            currentTag = tag;
+            updateTagUI();
+            renderResults();
+        }
+
+        function updateTagUI() {
+            document.querySelectorAll('.tag-chip').forEach(el => {
+                el.classList.toggle('active', el.innerText === currentTag);
+            });
+        }
+
+        function fetchRandomSample() {
+            const list = currentMode === 'tieban' ? fullTieban : fullShaozi;
+            const randomItem = list[Math.floor(Math.random() * list.length)];
+            document.getElementById('search-input').value = randomItem.id;
+            renderResults();
+        }
+
+        function highlightKeyword(text, keyword) {
+            if (!keyword) return text;
+            const reg = new RegExp(`(${keyword})`, 'gi');
+            return text.replace(reg, '<mark class="hl">$1</mark>');
+        }
+
+        function renderResults() {
+            const list = currentMode === 'tieban' ? fullTieban : fullShaozi;
+            const query = document.getElementById('search-input').value.trim();
+            const grid = document.getElementById('poem-grid');
+            grid.innerHTML = '';
+
+            let filtered = list;
+
+            // 1. 標籤篩選
+            if (currentTag !== '全部') {
+                filtered = filtered.filter(item => {
+                    const tags = item.g || item.tags || [];
+                    return tags.includes(currentTag) || (item.t && item.t.includes(currentTag.replace('考', '')));
+                });
+            }
+
+            // 2. 關鍵字 / 條號篩選
+            if (query) {
+                const isNum = /^\d+$/.test(query);
+                if (isNum) {
+                    filtered = filtered.filter(item => String(item.id).includes(query));
+                } else {
+                    const terms = query.split(/\s+/).filter(Boolean);
+                    filtered = filtered.filter(item => {
+                        return terms.every(term => item.t && item.t.includes(term));
+                    });
+                }
+            }
+
+            // 限制最多顯示 100 筆保證極致流暢
+            const displayList = filtered.slice(0, 100);
+            document.getElementById('results-count-label').innerText = `查詢到 ${filtered.length.toLocaleString()} 條 (顯示前 ${displayList.length} 條)`;
+
+            if (displayList.length === 0) {
+                grid.innerHTML = '<div class="no-result">📭 查無吻合條文，請嘗試更換條號或關鍵字</div>';
+                return;
+            }
+
+            displayList.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'poem-card';
+                
+                let extraBadge = '';
+                if (currentMode === 'tieban') {
+                    if (item.a1 > 0 || item.a2 > 0) {
+                        extraBadge = `<span class="badge age-badge">歲數: ${item.a1}${item.a2 ? `~${item.a2}` : ''}歲</span>`;
+                    }
+                } else {
+                    extraBadge = `<span class="badge part-badge">${item.pn || ''} [${(item.g || []).join('-')}]</span>`;
+                }
+
+                const tags = (item.g || item.tags || []).map(t => `<span class="mini-tag">${t}</span>`).join('');
+
+                card.innerHTML = `
+                    <div class="card-header">
+                        <span class="poem-id">第 ${item.id} 條</span>
+                        ${extraBadge}
+                    </div>
+                    <div class="poem-body">
+                        ${highlightKeyword(item.t, query)}
+                    </div>
+                    ${tags ? `<div class="card-tags">${tags}</div>` : ''}
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        document.getElementById('search-input').addEventListener('input', () => {
+            renderResults();
+        });
+
+        // 啟動加載
+        init().then(() => {
+            // 初始化執行一次預設排盤
+            runBaziPaipan();
+        });
+    </script>
+</body>
+</html>
